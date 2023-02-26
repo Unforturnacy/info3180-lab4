@@ -7,9 +7,9 @@
 
 {# Add the appropriate method and enctype attributes to the form tag to allow for file uploads #}
 <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-  {{ form.hidden_tag()}}
-  {{ form.upload.label(class="") }}
-  {{ form.upload(class="") }}
+    {{form.hidden_tag()}}
+    {{form.upload.label()}}
+    {{form.upload()}}
 
   <button type="submit" name="submit" class="btn btn-primary">Upload file</button>
 </form>

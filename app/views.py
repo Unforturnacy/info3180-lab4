@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 from app.models import UserProfile
 from app.forms import LoginForm, UploadForm
 from werkzeug.security import check_password_hash
+from flask import send_from_directory
+
 
 ###
 # Routing for your application.
@@ -35,7 +37,7 @@ def upload():
         file_name = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
         flash('File Saved', 'success')
-        return redirect(url_for('upload')) # Update this to redirect the user to a route that displays all uploaded image files
+        return redirect(url_for('files')) # Update this to redirect the user to a route that displays all uploaded image files
 
     return render_template('upload.html', form=form)
 
@@ -75,7 +77,24 @@ def login():
 
 
 
+def get_uploaded_images():
+    images = []
+    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+        if not filename.endswith('.gitkeep'):
+         images.append(filename)
+    return images
 
+
+@app.route('/files')
+@login_required
+def files():
+    images = get_uploaded_images()
+    return render_template('files.html', images=images)
+
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
 
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
